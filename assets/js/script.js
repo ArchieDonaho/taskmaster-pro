@@ -44,7 +44,8 @@ var saveTasks = function() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
-//clicking on a <p> element within a ".list-group" parent...
+//edit the description
+  //clicking on a <p> element within a ".list-group" parent...
 $(".list-group").on("click", "p", function() {
   //grab the current text, trim it, and save it to "text"
   var text = $(this)
