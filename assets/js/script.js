@@ -195,3 +195,80 @@ $("#remove-tasks").on("click", function() {
 loadTasks();
 
 
+//elements with class "card" allow elements with class "list-group" to be sortable within them
+$(".card .list-group").sortable({
+  connectWith: $(".card .list-group"),
+  //doesnt scroll within the container
+  scroll: false,
+
+  tolerance: "pointer",
+  helper: "clone",
+  // //starts when dragging starts
+  // activate: function(event){
+  //   console.log("activate", this);
+  // },
+  // //starts when dragging stops
+  // deactivate: function(event){
+  //   console.log("deactivate", this);
+  // },
+  // //starts when item enters a connected list
+  // over: function(event){
+  //   console.log("over", this);
+  // },
+  // //starts when item exits a connected list
+  // out: function(event){
+  //   console.log("out", this);
+  // },
+  // activates when the contents of a list have changed (reordered, removed, or added)
+  update: function(event){
+    //array to store the task data
+    var tempArr = [];
+    //loop over current set of children in sortable list
+    $(this).children().each(function(){
+      // find the "p" element & grab it's text content
+      var text = $(this)
+        .find("p")
+        .text()
+        .trim();
+      // find the "span" element & grab it's text content
+      var date = $(this)
+        .find("span")
+        .text()
+        .trim();
+
+      //add task data to the temp array as an object
+      tempArr.push({
+        text: text,
+        date: date
+      });
+    });
+    //trim down list's ID to match object property
+    var arrName = $(this)
+      .attr("id")
+      .replace("list-", "");
+    //update the array on tasks object and save
+    tasks[arrName] = tempArr;
+    saveTasks();
+  }
+});
+
+//add a droppable capability to the trash
+$("#trash").droppable({
+  //only accept cards with list-group-item
+  accept: ".card .list-group-item",
+  //draggable overlaps the droppable entirely
+  tolerance: 'touch',
+  //triggers when accepted draggable is dropped on the droppable- function(event, (draggable, helper, position, offset))
+  //ui contains a property called "draggable" that contains the dragged element. we can then use this to delete the object
+  drop: function(event, ui){
+    ui.draggable.remove();
+  },
+  //triggers when accepted draggable is dragged over the droppable- function(event, (draggable, helper, position, offset))
+  over: function(event, ui){
+    console.log("over");
+  },
+  //triggers when accepted draggable is dragged out of the droppable- function(event, (draggable, helper, position, offset))
+  out: function(event, ui){
+    console.log('out');
+  }
+});
