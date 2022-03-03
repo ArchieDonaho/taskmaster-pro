@@ -202,7 +202,7 @@ $("#task-form-modal").on("shown.bs.modal", function() {
 });
 
 // save button in modal was clicked
-$("#task-form-modal .btn-primary").click(function() {
+$("#task-form-modal .btn-save").click(function() {
   // get form values
   var taskText = $("#modalTaskDescription").val();
   var taskDate = $("#modalDueDate").val();
@@ -241,25 +241,26 @@ $(".card .list-group").sortable({
   connectWith: $(".card .list-group"),
   //doesnt scroll within the container
   scroll: false,
-
   tolerance: "pointer",
   helper: "clone",
-  // //starts when dragging starts
-  // activate: function(event){
-  //   console.log("activate", this);
-  // },
-  // //starts when dragging stops
-  // deactivate: function(event){
-  //   console.log("deactivate", this);
-  // },
-  // //starts when item enters a connected list
-  // over: function(event){
-  //   console.log("over", this);
-  // },
-  // //starts when item exits a connected list
-  // out: function(event){
-  //   console.log("out", this);
-  // },
+  //starts when dragging starts
+  activate: function(event){
+    $(this).addClass("dropover");
+    $("#trash .bottom-trash").addClass("bottom-trash-drag");
+  },
+  //starts when dragging stops
+  deactivate: function(event){
+    $(this).removeClass("dropover");
+    $("#trash .bottom-trash").removeClass("bottom-trash-drag");
+  },
+  //starts when item enters a connected list
+  over: function(event){
+    $(this).addClass("dropover-active");
+  },
+  //starts when item exits a connected list
+  out: function(event){
+    $(this).removeClass("dropover-active");
+  },
   // activates when the contents of a list have changed (reordered, removed, or added)
   update: function(event){
     //array to store the task data
@@ -307,10 +308,12 @@ $("#trash").droppable({
   //triggers when accepted draggable is dragged over the droppable- function(event, (draggable, helper, position, offset))
   over: function(event, ui){
     console.log("over");
+    $("#trash .bottom-trash").addClass("bottom-trash-active");
   },
   //triggers when accepted draggable is dragged out of the droppable- function(event, (draggable, helper, position, offset))
   out: function(event, ui){
     console.log('out');
+    $("#trash .bottom-trash").removeClass("bottom-trash-active");
   }
 });
 
@@ -319,3 +322,11 @@ $("#modalDueDate").datepicker({
   //sets a minimum date "1" day after the current date
   // minDate: 1
 });
+
+setInterval(function() {
+  $(".card .list-group-item").each(function(idex, el){
+    auditTask(el);
+    console.log("hello");
+  })
+}, (1000 * 60) * 30);
+//allows us to use "30" as minutes to make it easier to read
